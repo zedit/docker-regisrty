@@ -1,0 +1,29 @@
+version: '3.1'
+
+services:
+   registry:
+     image: registry:2
+     volumes:
+       - /mnt/registry:/var/lib/registry
+     environment:
+       REGISTRY_HTTP_TLS_CERTIFICATE: /run/secrets/certificate
+       REGISTRY_HTTP_TLS_KEY: /run/secrets/key
+       REGISTRY_AUTH: htpasswd
+       REGISTRY_AUTH_HTPASSWD_PATH: /run/secrets/htp
+       REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
+       REGISTRY_HTTP_ADDR: 0.0.0.0:80
+       constraint: node.labels.registry==true
+     secrets:
+       - certificate
+       - key
+       - htp
+     ports:
+     - "80:80"
+
+secrets:
+   certificate:
+     file: certs/web.crt
+   key:
+     file: certs/web.key
+   htp:
+     file: auth/htpasswd
